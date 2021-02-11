@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <menuitem id="things_menu_root" 
+        name="Things Network"
+    />
+
+    <act_window id="things_gate_action" 
+        name="Gates"
+        res_model="things.gate"
+        view_mode = "tree,form"
+    />
+
+    <menuitem id="things_menu_gate"
+        name="Gates"
+        action="things_gate_action" 
+        parent="things_menu_root"
+    />
+
+    <act_window id="action_wizard_gate_confirm"
+        name="Confirm New Gate"
+        res_model="gate.confirm.wizard"
+        view_mode="form" target="new" />
+
+    <menuitem
+        id="menu_wizard_gate_confirm"
+        parent="things_menu_root"
+        action="action_wizard_gate_confirm"
+    />
+
+</odoo>

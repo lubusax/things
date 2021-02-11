@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+acl_gate,things.gate_default,model_things_gate,,1,0,0,0
+acl_gate_admin,things.gate_admin,model_things_gate,group_things_admin,1,1,1,1
+acl_things_basis,things.basisdefault,model_things_basis,,1,0,0,0
+acl_things_basis_admin,things.basis_admin,model_things_basis,group_things_admin,1,1,1,1
+acl_things_route,things.route_default,model_things_route,,1,0,0,0
+acl_things_route_admin,things.route_admin,model_things_route,group_things_admin,1,1,1,1
