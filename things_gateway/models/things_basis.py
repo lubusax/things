@@ -10,13 +10,22 @@ class ThingsBasis(models.AbstractModel):
     confirmed = fields.Boolean(
         'Confirmed?',
         default = False)
+    serial_number = fields.Char(
+        string='Serial Number',
+        default = generate_default_serial_number)
     
-    _sql_constraints = [ (  'name_uniq',
-                            'UNIQUE (name)',
-                            'Name must be unique.') ]
+    _sql_constraints = [ (  'serial_number_uniq',
+                            'UNIQUE (serial_number)',
+                            'Serial Number must be unique.') ]
 
     def generate_route(self):
         return self.env['things.route'].create({}).route
+    
+    def generate_default_serial_number(self):
+        result = str(fields.Datetime.now())
+        result = result.replace(" ","").replace(":","").replace("-","")
+        result= "serial number not provided - " + result
+        return result
 
     route_to =fields.Char(
         string = 'route to thing/gate',

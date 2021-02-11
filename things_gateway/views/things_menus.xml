@@ -2,7 +2,7 @@
 <odoo>
     
     <menuitem id="things_menu_root" 
-        name="Things Network"
+        name="Things Gateways"
     />
 
     <act_window id="things_gate_action" 

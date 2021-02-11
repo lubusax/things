@@ -3,6 +3,9 @@
 
 {
     'name': 'Things RAS3',
+    'summary': "Connect Odoo with your RFID Attendance Terminal RAS3",       
+    'description': """Manage your Attendances using a RFID Attendance Terminal RAS3.
+        """,
 
     'version': '12.0.1.0.210211',
     'category': 'Things',
@@ -13,7 +16,7 @@
     'installable': True,
     'depends': [
         'hr_attendance_rfid',
-        'gate',
+        'things_gateway',
     ],
     'data': [
         'views/hr_employee_view.xml',

@@ -1,8 +1,9 @@
 {
     'name': "Things Gateway",
-    'summary': "Manage your Gateways and connect to your net of sensors and devices",       
+    'summary': "Connect Odoo to your sensors and devices",       
     'description': """Receive and send data
-        from/to your net of sensors and devices""",
+        from/to your sensors and devices.
+        Manage your Things Gateways that guide the data between your sensors/devices and Odoo. """,
 
     'version': '12.0.1.0.210211',
     'category': 'Things',

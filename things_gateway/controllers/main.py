@@ -1,4 +1,5 @@
 from odoo import http
+import time
 
 class ThingsGate(http.Controller):
 
@@ -8,16 +9,18 @@ class ThingsGate(http.Controller):
     def RegisterNewGate(self, **kwargs,):
         # create a new record things.gate
         # only if there is no things.gate
-        # awaiting to be cpnfirmed
+        # awaiting to be confirmed
 
         name     = kwargs.get('name')
         location   = kwargs.get('location')
+        serial_number   = kwargs.get('serial_number')
 
         if not name: name ="not specified"
         if not location: location ="not specified"
 
         print('name: ', name)
         print('location: ', location)
+        print('serial number: ', serial_number)
         
         GatesModel = http.request.env['things.gate']
 
