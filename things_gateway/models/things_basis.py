@@ -14,15 +14,15 @@ class ThingsBasis(models.AbstractModel):
 
     # manufacturingData
     firmwareAtShipment = fields.Char()
-    productName = fields.Char()
+    productName = fields.Char("Gateway Type")
     productionDate = fields.Char()
     productionLocation = fields.Char()
     productionNumber = fields.Char()
     qualityInspector = fields.Char()
 
     #info not to be changed in Odoo
-    firmwareVersion = fields.Char()
-    ipAddress = fields.Char() # on the device "ownIpAddress"
+    firmwareVersion = fields.Char("Firmware Version")
+    ipAddress = fields.Char("Local IP Address") # on the device "ownIpAddress"
 
     #info to be changed in Odoo
 

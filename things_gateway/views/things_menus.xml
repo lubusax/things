@@ -5,7 +5,7 @@
         name="Things Gateways"
     />
 
-    <act_window id="things_gate_action" 
+    <!-- <act_window id="things_gate_action" 
         name="Gateways"
         res_model="things.gate"
         view_mode = "tree,form"
@@ -14,6 +14,18 @@
     <menuitem id="things_menu_gate"
         name="Gateways"
         action="things_gate_action" 
+        parent="things_menu_root"
+    /> -->
+
+    <act_window id="things_ras2_action" 
+        name="RAS2 Terminals"
+        res_model="things.ras2"
+        view_mode = "tree,form"
+    />
+
+    <menuitem id="things_menu_ras2"
+        name="RAS2 Terminals"
+        action="things_ras2_action" 
         parent="things_menu_root"
     />
 

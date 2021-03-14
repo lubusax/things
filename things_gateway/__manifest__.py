@@ -21,6 +21,7 @@
         'security/ir.model.access.csv',
         'views/things_menus.xml',
         'views/things_gate.xml',
+        'views/things_ras2.xml'
     ],
 # 'demo': ['demo.xml'],
 }
