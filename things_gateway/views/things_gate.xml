@@ -13,12 +13,12 @@
         <form>
             <group>
                 <group>
-                    <field name="name"/>
+                    <field name="productName"/>
                     <field name="location"/>
                 </group>
                 <group>
-                    <field name="can_receive"/>
-                    <field name="can_send"/>                       
+                    <field name="firmwareVersion"/>
+                    <field name="ipAddress"/>                       
                 </group>
             </group>
         </form>
@@ -31,13 +31,10 @@
         <field name="model">things.gate</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="confirmed"/>
-                <field name="name"/>
+                <field name="productName"/>
                 <field name="location"/>
-                <field name="route_to"/>
-                <field name="can_receive"/>
-                <field name="route_from"/>
-                <field name="can_send"/>
+                <field name="firmwareVersion"/>
+                <field name="ipAddress"/>
             </tree>
         </field>
     </record>
@@ -48,7 +45,7 @@
         <field name="model">things.gate</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name"/>
+                <field name="productName"/>
                 <field name="location"/>
             </search>
         </field>

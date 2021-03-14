@@ -21,7 +21,6 @@
         'security/ir.model.access.csv',
         'views/things_menus.xml',
         'views/things_gate.xml',
-        'views/popup_wizard.xml',
     ],
 # 'demo': ['demo.xml'],
 }

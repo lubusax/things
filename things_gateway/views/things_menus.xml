@@ -6,26 +6,15 @@
     />
 
     <act_window id="things_gate_action" 
-        name="Gates"
+        name="Gateways"
         res_model="things.gate"
         view_mode = "tree,form"
     />
 
     <menuitem id="things_menu_gate"
-        name="Gates"
+        name="Gateways"
         action="things_gate_action" 
         parent="things_menu_root"
-    />
-
-    <act_window id="action_wizard_gate_confirm"
-        name="Confirm New Gate"
-        res_model="gate.confirm.wizard"
-        view_mode="form" target="new" />
-
-    <menuitem
-        id="menu_wizard_gate_confirm"
-        parent="things_menu_root"
-        action="action_wizard_gate_confirm"
     />
 
 </odoo>
