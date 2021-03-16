@@ -65,9 +65,9 @@ class ThingsRas2Gate(http.Controller):
                 for p in list_of_params_to_include_in_answer:
                    answer[p]=newRas2Dict.get(p)
         except Exception as e:
-            _logger.info(f'the new gate request could not be dispatched - Exception {e}')
+            _logger.info('the new gate request could not be dispatched - Exception', e)
             answer["error"] = e
-        _logger.info(f'answer to request to register RAS2: {answer}')
+        _logger.info('answer to request to register RAS2: ', answer)
         return answer
 
     @http.route('/things/gates/ras2/incoming/<routeFrom>',
