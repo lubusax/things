@@ -15,6 +15,7 @@
                 <group>
                     <field name="productName"/>
                     <field name="location"/>
+                    <field name="shouldGetFirmwareUpdate"/>
                 </group>
                 <group>
                     <field name="firmwareVersion"/>

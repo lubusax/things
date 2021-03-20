@@ -6,29 +6,31 @@ class ThingsBasis(models.AbstractModel):
     _description = 'Basis Model for a Things Gateway'
 
     # Machine ID identifies the linux machines (Gateway) uniquely
-    hashed_machine_id = fields.Char()
+    hashed_machine_id = fields.Char(readonly = True)
 
     _sql_constraints = [ (  'hashed_machine_id_uniq',
                             'UNIQUE (hashed_machine_id)',
                             'Machine ID must be unique.') ]
 
     # manufacturingData
-    firmwareAtShipment = fields.Char()
-    productName = fields.Char("Gateway Type")
-    productionDate = fields.Char()
-    productionLocation = fields.Char()
-    productionNumber = fields.Char()
-    qualityInspector = fields.Char()
+    firmwareAtShipment = fields.Char(readonly = True)
+    productName = fields.Char("Type", readonly = True)
+    productionDate = fields.Char(readonly = True)
+    productionLocation = fields.Char(readonly = True)
+    productionNumber = fields.Char(readonly = True)
+    qualityInspector = fields.Char(readonly = True)
 
     #info not to be changed in Odoo
-    firmwareVersion = fields.Char("Firmware Version")
-    ipAddress = fields.Char("Local IP Address") # on the device "ownIpAddress"
+    firmwareVersion = fields.Char("Firmware Version", readonly = True)
+    ipAddress = fields.Char("Local IP Address", readonly = True) # on the device "ownIpAddress"
 
     #info to be changed in Odoo
 
     location = fields.Char('Location')
     ssh  = fields.Char() #enable, disable
     sshPassword = fields.Char()
+    shouldGetFirmwareUpdate = fields.Boolean("Update Firmware",
+             help = "when rebooted, the firmware will be updated")
 
 
     def generate_route(self):
