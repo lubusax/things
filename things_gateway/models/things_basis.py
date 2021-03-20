@@ -30,7 +30,13 @@ class ThingsBasis(models.AbstractModel):
     ssh  = fields.Char() #enable, disable
     sshPassword = fields.Char()
     shouldGetFirmwareUpdate = fields.Boolean("Update Firmware",
-             help = "when rebooted, the firmware will be updated")
+            help = "when rebooted, the firmware will be updated")
+    setRebootAt = fields.Datetime('Reboot Time',
+            help = 'Time when the Terminal will be rebooted',
+            default = None)
+    shutdownTerminal = fields.Boolean("Shutdown",
+            help = "Shutdown the Terminal immediately",
+            default = False)
 
 
     def generate_route(self):

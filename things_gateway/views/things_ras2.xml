@@ -16,10 +16,12 @@
                     <field name="productName"/>
                     <field name="location"/>
                     <field name="shouldGetFirmwareUpdate"/>
+                    <field name="setRebootAt"/>
                 </group>
                 <group>
                     <field name="firmwareVersion"/>
-                    <field name="ipAddress"/>                       
+                    <field name="ipAddress"/>
+                    <field name="shutdownTerminal"/>                     
                 </group>
             </group>
         </form>

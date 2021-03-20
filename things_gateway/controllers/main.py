@@ -60,7 +60,6 @@ class ThingsRasGate(http.Controller):
                 ras2_to_be_acknowledged.sudo().write({
                         'firmwareVersion' : data.get('firmwareVersion'),
                         'ipAddress' : data.get('ownIpAddress'),
-                        'location' : data.get('location'), 
                         'ssh' : data.get('ssh'), 
                         'sshPassword' : data.get('sshPassword'),
                         'language' : data.get('language'), 
@@ -71,7 +70,8 @@ class ThingsRasGate(http.Controller):
                         'periodEvaluateReachability' : data.get('periodEvaluateReachability'), 
                         'timeToDisplayResultAfterClocking' : data.get('timeToDisplayResultAfterClocking'), 
                         'timeoutToCheckAttendance' : data.get('timeoutToCheckAttendance'), 
-                        'timeoutToGetOdooUID' : data.get('timeoutToGetOdooUID')                 
+                        'timeoutToGetOdooUID' : data.get('timeoutToGetOdooUID'),
+                        'shouldGetFirmwareUpdate': data.get('shouldGetFirmwareUpdate')                
                 })
             else:
                 ras2_to_be_acknowledged = Ras2Model.sudo().create({
@@ -95,7 +95,8 @@ class ThingsRasGate(http.Controller):
                         'periodEvaluateReachability' : data.get('periodEvaluateReachability'), 
                         'timeToDisplayResultAfterClocking' : data.get('timeToDisplayResultAfterClocking'), 
                         'timeoutToCheckAttendance' : data.get('timeoutToCheckAttendance'), 
-                        'timeoutToGetOdooUID' : data.get('timeoutToGetOdooUID')                 
+                        'timeoutToGetOdooUID' : data.get('timeoutToGetOdooUID'),
+                        'shouldGetFirmwareUpdate': data.get('shouldGetFirmwareUpdate')                 
                 })
 
             ras2_Dict = ras2_to_be_acknowledged.sudo().read()[0]
@@ -103,7 +104,8 @@ class ThingsRasGate(http.Controller):
             list_of_params_to_include_in_answer = ['id',
                 'routefromOdooToDevice',
                 'routefromDeviceToOdoo',
-                'shouldGetFirmwareUpdate']
+                'shouldGetFirmwareUpdate',
+                'location']
             for p in list_of_params_to_include_in_answer:
                 answer[p] = ras2_Dict.get(p)
 
@@ -113,42 +115,100 @@ class ThingsRasGate(http.Controller):
         _logger.info(f'answer to request to register RAS: {answer} ')
         return answer
 
+
+    def resetSettings(self,routeFrom, answer):
+        try:
+            Ras2Model = http.request.env['things.ras2']
+            ras2_in_database = Ras2Model.sudo().search(
+                [('routefromDeviceToOdoo', '=', routeFrom)])
+            
+            if ras2_in_database:
+                ras2_in_database.sudo().write({
+                    'setRebootAt' : None;
+                    'shutdownTerminal' : False,
+                    'shouldGetFirmwareUpdate': False)                
+                })
+            else:
+                answer["error"] = "This should never occur. Method resetSettings"
+                _logger.info(f'resetSettings RAS - Error: {answer["error"]} ')
+        except Exception as e:
+            _logger.info(f'resetSettings RAS - Exception {e}')
+            answer["error"] = e
+
+        _logger.info(f'resetSettings RAS: {answer} ')
+        return answer
+
+
     @http.route('/things/gates/ras/incoming/<routeFrom>',
             type = 'json',
-            auth ='public', csrf=False)    
+            auth = 'public',
+            methods=['POST'],
+            csrf = False)
     def messageFromGate(self, routeFrom, **kwargs):
-        GatesModel = http.request.env['things.gate']
-        response = {
-            'gate route known'  :   'false',
-            'type created'      :   'none',
-            'route from'        :   'none',
-            'route to'          :   'none',
-            'error'             :   'none'
-        }
-        
-        gateSending = GatesModel.sudo().search(
-            [('route_from', '=', routeFrom)])
-        if gateSending:
-            response = {'gate route known': 'true'}
+        answer = {"error": None}
+        try:
+            data = http.request.jsonrequest
+            productName = data.get('productName', None)
+            question = data.get('question', None)
+
+            if productName == "RAS2" and question == "Reset":
+                answer = self.resetSettings(routeFrom, answer)
+        except Exception as e:
+            _logger.info(f'Message from Odoo To Gate could not be dispatched - Exception {e}')
+            answer["error"] = e
+
+        return answer
+
+    def answerRas2routineQuestion(self,routeTo, data, answer):
+        try:
+            Ras2Model = http.request.env['things.ras2']
+            ras2_in_database = Ras2Model.sudo().search(
+                [('routefromOdooToDevice', '=', routeTo)])
             
-        return response
+            if ras2_in_database:
+                ras2_Dict = ras2_in_database.sudo().read()[0]
+
+                list_of_params_to_include_in_answer = [ \
+                    "setRebootAt",
+                    'shouldGetFirmwareUpdate',
+                    'location',
+                    'shutdownTerminal']
+                for p in list_of_params_to_include_in_answer:
+                    answer[p] = ras2_Dict.get(p)
+            else:
+                answer["error"] = "This should never occur. Method answerRasroutineQuestion"
+                _logger.info(f'Routine Question RAS - Error: {answer["error"]} ')
+        except Exception as e:
+            _logger.info(f'Routine Question RAS - Exception {e}')
+            answer["error"] = e
+
+        _logger.info(f'answer to routine Question RAS: {answer} ')
+        return answer
 
     @http.route('/things/gates/ras/outgoing/<routeTo>',
             type = 'json',
-            auth ='public', csrf=False)    
-    def messageToGate(self, routeFrom, **kwargs):
-        GatesModel = http.request.env['things.gate']
-        response = {
-            'gate route known'  :   'false',
-            'type created'      :   'none',
-            'route from'        :   'none',
-            'route to'          :   'none',
-            'error'             :   'none'
-        }
-        
-        gateSending = GatesModel.sudo().search(
-            [('route_from', '=', routeFrom)])
-        if gateSending:
-            response = {'gate route known': 'true'}
-            
-        return response
+            auth = 'public',
+            methods=['POST'],
+            csrf = False)    
+    def messageToGate(self, routeTo, **kwargs):
+        answer = {"error": None}
+        try:
+            data = http.request.jsonrequest
+            productName = data.get('productName', None)
+            question = data.get('question', None)
+
+            if productName == "RAS2" and question == "Routine":
+                answer = self.answerRas2routineQuestion(routeTo, data, answer)
+        except Exception as e:
+            _logger.info(f'Message from Odoo To Gate could not be dispatched - Exception {e}')
+            answer["error"] = e
+
+        return answer
+
+
+
+
+
+
+
+
