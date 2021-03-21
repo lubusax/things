@@ -23,6 +23,8 @@ class ThingsBasis(models.AbstractModel):
     #info not to be changed in Odoo
     firmwareVersion = fields.Char("Firmware Version", readonly = True)
     ipAddress = fields.Char("Local IP Address", readonly = True) # on the device "ownIpAddress"
+    incrementalLog = fields.Text('Incremental Log', readonly = True)
+    #linesOfIncrementalLog = fields
 
     #info to be changed in Odoo
 

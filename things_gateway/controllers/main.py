@@ -115,7 +115,6 @@ class ThingsRasGate(http.Controller):
         _logger.info(f'answer to request to register RAS: {answer} ')
         return answer
 
-
     def resetSettings(self,routeFrom, answer):
         try:
             Ras2Model = http.request.env['things.ras2']
@@ -124,9 +123,9 @@ class ThingsRasGate(http.Controller):
             
             if ras2_in_database:
                 ras2_in_database.sudo().write({
-                    'setRebootAt' : None;
+                    'setRebootAt' : None,
                     'shutdownTerminal' : False,
-                    'shouldGetFirmwareUpdate': False)                
+                    'shouldGetFirmwareUpdate': False                
                 })
             else:
                 answer["error"] = "This should never occur. Method resetSettings"
@@ -137,7 +136,6 @@ class ThingsRasGate(http.Controller):
 
         _logger.info(f'resetSettings RAS: {answer} ')
         return answer
-
 
     @http.route('/things/gates/ras/incoming/<routeFrom>',
             type = 'json',
@@ -166,7 +164,23 @@ class ThingsRasGate(http.Controller):
                 [('routefromOdooToDevice', '=', routeTo)])
             
             if ras2_in_database:
+                incrementalLog_received = data.get('incrementalLog')
                 ras2_Dict = ras2_in_database.sudo().read()[0]
+                incrementalLog_stored = ras2_Dict['incrementalLog']
+                log_length = len(incrementalLog_stored)
+                _logger.info(f'Length of incremental log in storage {log_length} ')
+                if log_length > 10000:
+                    incrementalLog_capped = incrementalLog_stored[3000:]
+                else:
+                    incrementalLog_capped = incrementalLog_stored
+                incrementalLog_received_str = ""
+                for l in incrementalLog_received:
+                    incrementalLog_received_str += l +"\n"
+                _logger.info(f'incrementalLog_received_str {incrementalLog_received_str} ')
+                new_inc_log = incrementalLog_capped + incrementalLog_received_str
+                ras2_in_database.sudo().write({
+                        'incrementalLog' : new_inc_log,                
+                })
 
                 list_of_params_to_include_in_answer = [ \
                     "setRebootAt",
@@ -204,11 +218,3 @@ class ThingsRasGate(http.Controller):
             answer["error"] = e
 
         return answer
-
-
-
-
-
-
-
-

@@ -24,6 +24,9 @@
                     <field name="shutdownTerminal"/>                     
                 </group>
             </group>
+            <group>
+                <field name="incrementalLog"/>
+            </group>
         </form>
         </field>
     </record>
