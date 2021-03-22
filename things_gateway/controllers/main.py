@@ -1,4 +1,4 @@
-from odoo import http
+from odoo import http, fields
 import time
 import logging
 import json
@@ -71,7 +71,8 @@ class ThingsRasGate(http.Controller):
                         'timeToDisplayResultAfterClocking' : data.get('timeToDisplayResultAfterClocking'), 
                         'timeoutToCheckAttendance' : data.get('timeoutToCheckAttendance'), 
                         'timeoutToGetOdooUID' : data.get('timeoutToGetOdooUID'),
-                        'shouldGetFirmwareUpdate': data.get('shouldGetFirmwareUpdate')                
+                        'shouldGetFirmwareUpdate': data.get('shouldGetFirmwareUpdate'),
+                        'timestampLastConnection': fields.Datetime.now()                
                 })
             else:
                 ras2_to_be_acknowledged = Ras2Model.sudo().create({
@@ -96,7 +97,8 @@ class ThingsRasGate(http.Controller):
                         'timeToDisplayResultAfterClocking' : data.get('timeToDisplayResultAfterClocking'), 
                         'timeoutToCheckAttendance' : data.get('timeoutToCheckAttendance'), 
                         'timeoutToGetOdooUID' : data.get('timeoutToGetOdooUID'),
-                        'shouldGetFirmwareUpdate': data.get('shouldGetFirmwareUpdate')                 
+                        'shouldGetFirmwareUpdate': data.get('shouldGetFirmwareUpdate'),
+                        'timestampLastConnection': fields.Datetime.now()                 
                 })
 
             ras2_Dict = ras2_to_be_acknowledged.sudo().read()[0]
@@ -105,7 +107,11 @@ class ThingsRasGate(http.Controller):
                 'routefromOdooToDevice',
                 'routefromDeviceToOdoo',
                 'shouldGetFirmwareUpdate',
-                'location']
+                'location',
+                'tz',
+                'hour12or24'
+                ]
+
             for p in list_of_params_to_include_in_answer:
                 answer[p] = ras2_Dict.get(p)
 
@@ -179,14 +185,17 @@ class ThingsRasGate(http.Controller):
                 _logger.info(f'incrementalLog_received_str {incrementalLog_received_str} ')
                 new_inc_log = incrementalLog_capped + incrementalLog_received_str
                 ras2_in_database.sudo().write({
-                        'incrementalLog' : new_inc_log,                
+                        'incrementalLog' : new_inc_log,
+                        'timestampLastConnection': fields.Datetime.now()               
                 })
 
                 list_of_params_to_include_in_answer = [ \
                     "setRebootAt",
                     'shouldGetFirmwareUpdate',
                     'location',
-                    'shutdownTerminal']
+                    'shutdownTerminal',
+                    'tz',
+                    'hour12or24']
                 for p in list_of_params_to_include_in_answer:
                     answer[p] = ras2_Dict.get(p)
             else:

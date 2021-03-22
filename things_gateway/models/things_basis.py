@@ -1,5 +1,6 @@
 from odoo import models, fields
 from uuid import uuid4
+from odoo.addons.base.models.res_partner import _tz_get
 
 class ThingsBasis(models.AbstractModel):
     _name = 'things.basis'
@@ -23,7 +24,16 @@ class ThingsBasis(models.AbstractModel):
     #info not to be changed in Odoo
     firmwareVersion = fields.Char("Firmware Version", readonly = True)
     ipAddress = fields.Char("Local IP Address", readonly = True) # on the device "ownIpAddress"
-    incrementalLog = fields.Text('Incremental Log', readonly = True)
+    incrementalLog = fields.Text('Last Log Entries', readonly = True)
+    timestampLastConnection = fields.Datetime('Last Connection',
+        help = "Timestamp of the last successful connection between the Device and Odoo",
+        default = None,
+        readonly = True)
+    tz = fields.Selection(
+        _tz_get, string='Timezone', required=True,
+        default=lambda self: self._context.get('tz') or self.env.user.tz or 'Europe/Madrid',
+        help="In which timezone the Device will display time.")
+
     #linesOfIncrementalLog = fields
 
     #info to be changed in Odoo

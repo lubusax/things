@@ -15,16 +15,25 @@
                 <group>
                     <field name="productName"/>
                     <field name="location"/>
+                    <field name="tz"/>
+                    <field name="hour12or24"/>
+                </group>
+                <group>
+                    <field name="firmwareVersion"/>
+                    <field name="ipAddress"/>                   
+                </group>
+            </group>
+            <group>
+                <group>                                        
                     <field name="shouldGetFirmwareUpdate"/>
                     <field name="setRebootAt"/>
                 </group>
                 <group>
-                    <field name="firmwareVersion"/>
-                    <field name="ipAddress"/>
                     <field name="shutdownTerminal"/>                     
                 </group>
             </group>
             <group>
+                <field name="timestampLastConnection"/>
                 <field name="incrementalLog"/>
             </group>
         </form>
