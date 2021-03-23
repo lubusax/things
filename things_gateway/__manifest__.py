@@ -1,13 +1,12 @@
 {
-    'name': "Things Gateway",
-    'summary': "Connect Odoo to your sensors and devices",       
-    'description': """Receive and send data
-        from/to your sensors and devices.
-        Manage your Things Gateways that guide the data between your sensors/devices and Odoo. """,
+    'name': "Things RAS - RFID Attendance",
+    'summary': "Connect your Things RAS RFID Attendance with Odoo",       
+    'description': """Receive RFID Attendance Clockings directly in Odoo.
+        Manage your Thins RAS RFID Terminal from Odoo. """,
 
-    'version': '12.0.1.0.210211', # update controllers.main.ThingsRasGate
+    'version': '12.0.2.0.210211', # update controllers.main.ThingsRasGate
     'category': 'Things',
-    'website': "http://www.thingsintouch.com",
+    'website': "https://thingsintouch.com",
     'images': [
         'static/description/icon.png',
     ],
@@ -17,6 +16,7 @@
     'installable': True,    
     'depends': ['base'],
     'data': [
+        'security/things_ras_rfid_attendance.xml',
         'security/groups.xml',
         'security/ir.model.access.csv',
         'views/things_menus.xml',
