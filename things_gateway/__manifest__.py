@@ -17,7 +17,6 @@
     'depends': ['base'],
     'data': [
         'security/things_ras_rfid_attendance.xml',
-        'security/groups.xml',
         'security/ir.model.access.csv',
         'views/things_menus.xml',
         'views/things_gate.xml',

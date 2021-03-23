@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="group_things_attendance_rfid" model="res.groups">
-        <field name="name">Things RAS - RFID Attendance</field>
-        <field name="category_id" ref="base.module_category_things_ras"/>
+    <record id="group_things_ras" model="res.groups">
+        <field name="name">Things RAS</field>
+        <field name="category_id" ref="base.module_category_things"/>
     </record>
 </odoo>
