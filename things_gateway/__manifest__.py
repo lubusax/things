@@ -16,7 +16,7 @@
     'installable': True,    
     'depends': ['base'],
     'data': [
-        'security/things_ras_rfid_attendance.xml',
+        'security/things_ras.xml',
         'security/ir.model.access.csv',
         'views/things_menus.xml',
         'views/things_gate.xml',

@@ -64,40 +64,24 @@ class ThingsRasGate(http.Controller):
                         'sshPassword' : data.get('sshPassword'),
                         'language' : data.get('language'), 
                         'showEmployeeName' : data.get('showEmployeeName'), 
-                        'terminalSetupManagement' : data.get('terminalSetupManagement'), 
-                        'timezone' : data.get('timezone'), 
-                        'periodDisplayClock' : data.get('periodDisplayClock'), 
-                        'periodEvaluateReachability' : data.get('periodEvaluateReachability'), 
-                        'timeToDisplayResultAfterClocking' : data.get('timeToDisplayResultAfterClocking'), 
-                        'timeoutToCheckAttendance' : data.get('timeoutToCheckAttendance'), 
-                        'timeoutToGetOdooUID' : data.get('timeoutToGetOdooUID'),
-                        'shouldGetFirmwareUpdate': data.get('shouldGetFirmwareUpdate'),
                         'timestampLastConnection': fields.Datetime.now()                
                 })
             else:
                 ras2_to_be_acknowledged = Ras2Model.sudo().create({
-                        'hashed_machine_id' : hashed_machine_id,
                         'firmwareAtShipment' : md.get('firmwareAtShipment'),
                         'productName' : md.get('productName'),
                         'productionDate' : md.get('productionDate'),
                         'productionLocation' : md.get('productionLocation'),
                         'productionNumber' : md.get('productionNumber'),
-                        'qualityInspector' : md.get('qualityInspector'),                        
-                        'firmwareVersion' : data.get('firmwareVersion'),
-                        'ipAddress' : data.get('ownIpAddress'),
-                        'location' : data.get('location'), 
+                        'qualityInspector' : md.get('qualityInspector'),
+                        'hashed_machine_id' : hashed_machine_id,
+                        'firmwareVersion' : data.get('firmwareVersion'),                        
+                        'language' : data.get('language'),   
+                        'ipAddress' : data.get('ownIpAddress'),                                                                                             
                         'ssh' : data.get('ssh'), 
-                        'sshPassword' : data.get('sshPassword'),
-                        'language' : data.get('language'), 
+                        'sshPassword' : data.get('sshPassword'), 
                         'showEmployeeName' : data.get('showEmployeeName'), 
-                        'terminalSetupManagement' : data.get('terminalSetupManagement'), 
-                        'timezone' : data.get('timezone'), 
-                        'periodDisplayClock' : data.get('periodDisplayClock'), 
-                        'periodEvaluateReachability' : data.get('periodEvaluateReachability'), 
-                        'timeToDisplayResultAfterClocking' : data.get('timeToDisplayResultAfterClocking'), 
-                        'timeoutToCheckAttendance' : data.get('timeoutToCheckAttendance'), 
-                        'timeoutToGetOdooUID' : data.get('timeoutToGetOdooUID'),
-                        'shouldGetFirmwareUpdate': data.get('shouldGetFirmwareUpdate'),
+                        'timezone' : data.get('timezone'),
                         'timestampLastConnection': fields.Datetime.now()                 
                 })
 
@@ -172,7 +156,7 @@ class ThingsRasGate(http.Controller):
             if ras2_in_database:
                 incrementalLog_received = data.get('incrementalLog')
                 ras2_Dict = ras2_in_database.sudo().read()[0]
-                incrementalLog_stored = ras2_Dict['incrementalLog']
+                incrementalLog_stored = ras2_Dict['incrementalLog'] or " "
                 log_length = len(incrementalLog_stored)
                 _logger.info(f'Length of incremental log in storage {log_length} ')
                 if log_length > 10000:
