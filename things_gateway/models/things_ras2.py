@@ -6,7 +6,7 @@ from odoo.addons.base.models.res_partner import _tz_get
 class ThingsRAS2(models.Model):
     _name = 'things.ras2'
     _description = 'Model for the RFID Attendance Terminal'
-
+    _rec_name = 'RASxxx'
 
   # Factory Settings ########################################################
     firmwareAtShipment = fields.Char(readonly = True)
@@ -23,31 +23,38 @@ class ThingsRAS2(models.Model):
     _sql_constraints = [ (  'hashed_machine_id_uniq',
                             'UNIQUE (hashed_machine_id)',
                             'Machine ID must be unique.') ]
+# RAS2 Device Setup ##############################################################
     
     https = fields.Boolean(readonly = True)
     odoo_host = fields.Char(readonly = True)
     odoo_port = fields.Char(readonly = True)
     odooConnectedAtLeastOnce = fields.Boolean(readonly = True)
     odooUrlTemplate = fields.Char(readonly = True) ###################### to deprecate
-    fileForMessages = fields.Char(readonly = True) ###################### to deprecate
-    teminalSetupManagement = fields.Char(readonly = True) # "remotely, on Odoo" "locally, on the terminal"#### to deprecate
-
-
-  # RAS2 Device Setup ##############################################################
+    #fileForMessages = fields.Char(readonly = True) ###################### to deprecate
+    #teminalSetupManagement = fields.Char(readonly = True) # "remotely, on Odoo" "locally, on the terminal"#### to deprecate
     hasCompletedSetup =  fields.Boolean(readonly = True)
-    admin_id = fields.Char(readonly = True) ############################# to deprecate
-    db = fields.Char(readonly = True) ################################### to deprecate
-    user_name = fields.Char(readonly = True) ############################ to deprecate
-    user_password = fields.Char(readonly = True)# ####################### to deprecate
-    timezone = fields.Char("timezone in +xx:xx"
-        ,readonly = True) # "+01:00" ################ to deprecate  # to be substituted by "tz"
+    #admin_id = fields.Char(readonly = True) ############################# to deprecate
+    #db = fields.Char(readonly = True) ################################### to deprecate
+    #user_name = fields.Char(readonly = True) ############################ to deprecate
+    #user_password = fields.Char(readonly = True)# ####################### to deprecate
+    #timezone = fields.Char("timezone in +xx:xx"
+    #   ,readonly = True) # "+01:00" ################ to deprecate  # to be substituted by "tz"
 
 
   # UPDATED_FROM_ODOO_ONLY_ON_START ###############################################
 
-    #>>>>>>>>>>>> terminalIDinOdoo is the id ####################################
+    # >>>>>>>>>>>> terminalIDinOdoo is the id ####################################
+    def generate_RASxxx(self):
+        RAS_id_str = str(self.id)
+        if len(RAS_id_str)==1:
+            RAS_id_str = "00" + RAS_id_str
+        elif len(RAS_id_str)==2:
+            RAS_id_str = "0" + RAS_id_str
+        elif len(RAS_id_str)>3:
+            RAS_id_str = RAS_id_str[-3:]
+        return "RAS" + RAS_id_str
 
-    RASxxx = fields.Char(readonly = True)
+    RASxxx = fields.Char(readonly = True, default= generate_RASxxx, required=True)
 
     def generate_route(self):
       return self.env['things.route'].create({}).route
@@ -126,9 +133,10 @@ class ThingsRAS2(models.Model):
     lastTimeTerminalStarted = fields.Datetime('Last Time Device Started',
       default = None, readonly = True)
     updateFailedCount = fields.Integer("How Many Times the last Firmware Update Failed", readonly = True)
+
     incrementalLog = fields.Text('Last Log Entries', readonly = True)
 
-    
+    # messages for display!!!
 
 
     

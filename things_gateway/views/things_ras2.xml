@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Custom Form View
-    
-    <form string="Gate">
-    
-     -->
+    <!-- Custom Form View -->
     <record id="things_ras2_view_form" model="ir.ui.view">
         <field name="name">RAS2 Form</field>
         <field name="model">things.ras2</field>

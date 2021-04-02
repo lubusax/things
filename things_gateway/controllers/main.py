@@ -5,6 +5,63 @@ import json
 
 _logger = logging.getLogger(__name__)
 
+factory_settings = {
+  "firmwareAtShipment",
+  "productName",
+  "productionDate",
+  "productionLocation",
+  "productionNumber",
+  "qualityInspector",
+  "SSIDreset",
+  "hashed_machine_id"}
+
+defined_on_device_setup = {
+  "https",
+  "odoo_host",
+  "odoo_port",
+  "odooConnectedAtLeastOnce",
+  "odooUrlTemplate",
+  "hasCompletedSetup"}
+
+defined_on_ack_from_odoo = {
+  "terminalIDinOdoo",
+  "RASxxx",
+  "routefromDeviceToOdoo",
+  "routefromOdooToDevice",
+  "version_things_module_in_Odoo",
+  "ownIpAddress"}
+
+updated_continuously_from_odoo = {
+  "ssh",
+  "showEmployeeName",
+  "sshPassword",
+  "language",
+  "tz",
+  "time_format",
+  "timeoutToCheckAttendance",
+  "periodEvaluateReachability",
+  "periodDisplayClock",
+  "timeToDisplayResultAfterClocking",
+  "location",
+  "shouldGetFirmwareUpdate",
+  "setRebootAt",
+  'shutdownTerminal',
+  "isRemoteOdooControlAvailable",
+  "gitBranch",
+  "gitCommit",
+  "gitRemote",
+  "doFactoryReset",
+  "updateAvailable",
+  "lastConnectionOdooTerminal"}
+
+defined_on_ack_from_device = {
+  "installedPythonModules": [TxType.UPDATED_FROM_DEVICE, TxType.DO_NOT_RESET_ON_MANAGER_START],
+  "firmwareVersion":        [TxType.UPDATED_FROM_DEVICE, TxType.DO_NOT_RESET_ON_MANAGER_START],
+  "lastFirmwareUpdateTime": [TxType.UPDATED_FROM_DEVICE, TxType.DO_NOT_RESET_ON_MANAGER_START],
+  "lastTimeTerminalStarted":  [TxType.UPDATED_FROM_DEVICE, TxType.DO_NOT_RESET_ON_MANAGER_START],
+  "updateFailedCount":      [TxType.UPDATED_FROM_DEVICE, TxType.DO_NOT_RESET_ON_MANAGER_START],
+}
+
 class ThingsRasGate(http.Controller):
 
     @http.route('/things/gates/ras/version',
