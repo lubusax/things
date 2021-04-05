@@ -5,7 +5,7 @@ import json
 
 _logger = logging.getLogger(__name__)
 
-factory_settings = {
+factory_settings = [
   "firmwareAtShipment",
   "productName",
   "productionDate",
@@ -13,25 +13,25 @@ factory_settings = {
   "productionNumber",
   "qualityInspector",
   "SSIDreset",
-  "hashed_machine_id"}
+  "hashed_machine_id"]
 
-defined_on_device_setup = {
+defined_on_device_setup = [
   "https",
   "odoo_host",
   "odoo_port",
   "odooConnectedAtLeastOnce",
   "odooUrlTemplate",
-  "hasCompletedSetup"}
+  "hasCompletedSetup"]
 
-defined_on_ack_from_odoo = {
+defined_on_ack_from_odoo = [
   "terminalIDinOdoo",
   "RASxxx",
   "routefromDeviceToOdoo",
   "routefromOdooToDevice",
   "version_things_module_in_Odoo",
-  "ownIpAddress"}
+  "ownIpAddress"]
 
-updated_continuously_from_odoo = {
+updated_continuously_from_odoo = [
   "ssh",
   "showEmployeeName",
   "sshPassword",
@@ -52,15 +52,21 @@ updated_continuously_from_odoo = {
   "gitRemote",
   "doFactoryReset",
   "updateAvailable",
-  "lastConnectionOdooTerminal"}
+  "timestampLastConnection"]
 
-defined_on_ack_from_device = {
-  "installedPythonModules": [TxType.UPDATED_FROM_DEVICE, TxType.DO_NOT_RESET_ON_MANAGER_START],
-  "firmwareVersion":        [TxType.UPDATED_FROM_DEVICE, TxType.DO_NOT_RESET_ON_MANAGER_START],
-  "lastFirmwareUpdateTime": [TxType.UPDATED_FROM_DEVICE, TxType.DO_NOT_RESET_ON_MANAGER_START],
-  "lastTimeTerminalStarted":  [TxType.UPDATED_FROM_DEVICE, TxType.DO_NOT_RESET_ON_MANAGER_START],
-  "updateFailedCount":      [TxType.UPDATED_FROM_DEVICE, TxType.DO_NOT_RESET_ON_MANAGER_START],
-}
+defined_on_ack_from_device = [
+  "installedPythonModules",
+  "firmwareVersion",
+  "lastFirmwareUpdateTime",
+  "lastTimeTerminalStarted",
+  "updateFailedCount"]
+
+all_keys = factory_settings + defined_on_device_setup + \
+    defined_on_ack_from_device + updated_continuously_from_odoo + \
+    defined_on_ack_from_device
+
+keys_defined_in_device = factory_settings + \
+    defined_on_device_setup + defined_on_ack_from_device
 
 class ThingsRasGate(http.Controller):
 
@@ -96,14 +102,18 @@ class ThingsRasGate(http.Controller):
     def AcknowdledgeRasGate(self, **kwargs):
         # create a new record things.ras2
         # or return if existing 
+        def get_data_to_transfer(listOfkeys):
+            data_to_transfer ={}
+            for o in listOfkeys:
+                data_to_transfer[o] = data.get(o)
+            data_to_transfer['timestampLastConnection'] = fields.Datetime.now()          
+            return data_to_transfer
 
         answer = {"error": None}
         try:
             data = http.request.jsonrequest
             #_logger.info(f'data: {data}')
             hashed_machine_id = data.get('hashed_machine_id', None)
-            md = data.get('manufacturingData', {})
-
             _logger.info(f'hashed_machine_id: {hashed_machine_id}')
 
             Ras2Model = http.request.env['things.ras2']
@@ -112,54 +122,22 @@ class ThingsRasGate(http.Controller):
                  [('hashed_machine_id', '=', hashed_machine_id)])
             
             if ras2_machine_in_database:
-                # "Ras Gateway with same hashed machine id already registered"
                 ras2_to_be_acknowledged = ras2_machine_in_database
-                ras2_to_be_acknowledged.sudo().write({
-                        'firmwareVersion' : data.get('firmwareVersion'),
-                        'ipAddress' : data.get('ownIpAddress'),
-                        'ssh' : data.get('ssh'), 
-                        'sshPassword' : data.get('sshPassword'),
-                        'language' : data.get('language'), 
-                        'showEmployeeName' : data.get('showEmployeeName'), 
-                        'timestampLastConnection': fields.Datetime.now()                
-                })
+                ras2_to_be_acknowledged.sudo().write(
+                    get_data_to_transfer(keys_defined_in_device))
             else:
-                ras2_to_be_acknowledged = Ras2Model.sudo().create({
-                        'firmwareAtShipment' : md.get('firmwareAtShipment'),
-                        'productName' : md.get('productName'),
-                        'productionDate' : md.get('productionDate'),
-                        'productionLocation' : md.get('productionLocation'),
-                        'productionNumber' : md.get('productionNumber'),
-                        'qualityInspector' : md.get('qualityInspector'),
-                        'hashed_machine_id' : hashed_machine_id,
-                        'firmwareVersion' : data.get('firmwareVersion'),                        
-                        'language' : data.get('language'),   
-                        'ipAddress' : data.get('ownIpAddress'),                                                                                             
-                        'ssh' : data.get('ssh'), 
-                        'sshPassword' : data.get('sshPassword'), 
-                        'showEmployeeName' : data.get('showEmployeeName'), 
-                        'timezone' : data.get('timezone'),
-                        'timestampLastConnection': fields.Datetime.now()                 
-                })
+                ras2_to_be_acknowledged = Ras2Model.sudo().create(
+                    get_data_to_transfer(keys_defined_in_device))
 
             ras2_Dict = ras2_to_be_acknowledged.sudo().read()[0]
 
-            list_of_params_to_include_in_answer = ['id',
-                'routefromOdooToDevice',
-                'routefromDeviceToOdoo',
-                'shouldGetFirmwareUpdate',
-                'location',
-                'tz',
-                'hour12or24'
-                ]
-
-            for p in list_of_params_to_include_in_answer:
+            for p in all_keys:
                 answer[p] = ras2_Dict.get(p)
 
         except Exception as e:
             _logger.info(f'the new gate request could not be dispatched - Exception {e}')
             answer["error"] = e
-        _logger.info(f'answer to request to register RAS: {answer} ')
+        _logger.info(f'answer to request to acknowledge RAS: {answer} ')
         return answer
 
     def resetSettings(self,routeFrom, answer):

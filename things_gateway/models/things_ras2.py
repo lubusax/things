@@ -30,16 +30,7 @@ class ThingsRAS2(models.Model):
     odoo_port = fields.Char(readonly = True)
     odooConnectedAtLeastOnce = fields.Boolean(readonly = True)
     odooUrlTemplate = fields.Char(readonly = True) ###################### to deprecate
-    #fileForMessages = fields.Char(readonly = True) ###################### to deprecate
-    #teminalSetupManagement = fields.Char(readonly = True) # "remotely, on Odoo" "locally, on the terminal"#### to deprecate
     hasCompletedSetup =  fields.Boolean(readonly = True)
-    #admin_id = fields.Char(readonly = True) ############################# to deprecate
-    #db = fields.Char(readonly = True) ################################### to deprecate
-    #user_name = fields.Char(readonly = True) ############################ to deprecate
-    #user_password = fields.Char(readonly = True)# ####################### to deprecate
-    #timezone = fields.Char("timezone in +xx:xx"
-    #   ,readonly = True) # "+01:00" ################ to deprecate  # to be substituted by "tz"
-
 
   # UPDATED_FROM_ODOO_ONLY_ON_START ###############################################
 
@@ -84,10 +75,21 @@ class ThingsRAS2(models.Model):
 
   # UPDATED_FROM_ODOO_ON_ROUTINE_CALLS #####################################
     #  can be changed anytime when connected to Odoo through routine calls
-    ssh =  fields.Boolean()
-    showEmployeeName = fields.Boolean()
+    ssh =  fields.Boolean(string= 'ssh enabled?',
+        required= True,
+        default= True,
+        help="ssh on Terminal enabled??")
+    showEmployeeName = fields.Boolean(string= 'Show Employee Name?',
+        required= True,
+        default= True,
+        help="Show Employee Name on the Terminal Display?")
     sshPassword = fields.Char()
-    language = fields.Char()
+    language = fields.Selection(
+        [("ENGLISH","ENGLISH"),("ESPA\u00d1OL","ESPA\u00d1OL"),("FRAN\u00c7AIS","FRAN\u00c7AIS")],
+        string='Display Messages Language',
+        required=True,
+        default= "ENGLISH",
+        help="In which language should the terminal show the messages?")
     tz = fields.Selection(
         _tz_get, string='Timezone', required=True,
         default=lambda self: self._context.get('tz') or self.env.user.tz or 'Europe/Madrid',
@@ -98,13 +100,30 @@ class ThingsRAS2(models.Model):
         required=True,
         default= "12 hour",
         help="am/pm or 00:00 to 23:59")
-    timeoutToCheckAttendance = fields.Float()  
-    periodEvaluateReachability = fields.Float()  
-    periodDisplayClock = fields.Float()   
-    timeToDisplayResultAfterClocking = fields.Float()  
-    location = fields.Char('Location')
+    timeoutToCheckAttendance = fields.Float(string='Timeout to register Attendance [s]',
+        required=True,
+        default= 3.0,
+        help="Timeout of request to register Attendance XMLRPC")  
+    periodEvaluateReachability = fields.Float(string='Period Odoo Reachability [s]',
+        required=True,
+        default= 5.0,
+        help="Time between checks if Odoo is reachable (connected)")  
+    periodDisplayClock = fields.Float(string='Period Refresh Clock [s]',
+        required=True,
+        default= 10.0,
+        help="Time between refreshes of the clock display [s]")   
+    timeToDisplayResultAfterClocking = fields.Float(string='Time Result Of Clocking [s]',
+        required=True,
+        default= 1.2,
+        help="How Long will the Display show the Result after Clocking [s]")   
+    location = fields.Char(string='Location',
+        required=True,
+        default= "to be defined",
+        help="Where is the Terminal located?")
     shouldGetFirmwareUpdate = fields.Boolean("Update Firmware",
-        help = "when rebooted, the firmware will be updated")
+        required=True,
+        default= False,
+        help = "Update the firmware after rebooting")
     setRebootAt = fields.Datetime('Reboot Time',
         help = 'Time when the Terminal will be rebooted',
         default = None)
@@ -115,24 +134,34 @@ class ThingsRAS2(models.Model):
     gitBranch = fields.Char()
     gitCommit = fields.Char()
     gitRemote = fields.Char()
-    doFactoryReset = fields.Boolean()
-    updateAvailable = fields.Boolean(readonly = True)
+    updateOTAcommand = fields.Char()
+    doFactoryReset = fields.Boolean(string='Factory Reset',
+        required=True,
+        default= False,
+        help="Factory Reset after Rebooting. The Terminal will have to be Setup again.")
+    updateAvailable = fields.Boolean(string='Firmware Update Available',
+        required=True,
+        default= False,
+        readonly = True)
     lastConnectionOdooTerminal = fields.Datetime('Last Connection',
         help = "Timestamp of the last successful connection between the Device and Odoo",
         default = None,
         readonly = True)
-    timeoutToGetOdooUID = fields.Float() ############################ to deprecate
-
 
   # UPDATED_FROM_DEVICE: Updates are done through the Firmware #############################
-    installedPythonModules = fields.Char("Installed Python Modules in the Terminal", readonly = True)
+    installedPythonModules = fields.Char("Installed Python Modules",
+        readonly = True,
+        help="Installed Python Modules in the Terminal")
     firmwareVersion = fields.Char("Firmware Version", readonly = True)  
     lastFirmwareUpdateTime = fields.Datetime('Last Firmware Update',
-      help = 'Last Update of the Firmware of the Terminal',
-      default = None, readonly = True)
+        help = 'Last Update of the Firmware of the Terminal',
+        default = None,
+        readonly = True)
     lastTimeTerminalStarted = fields.Datetime('Last Time Device Started',
-      default = None, readonly = True)
-    updateFailedCount = fields.Integer("How Many Times the last Firmware Update Failed", readonly = True)
+        default = None,
+        readonly = True)
+    updateFailedCount = fields.Integer("How Many Times the last Firmware Update Failed",
+        readonly = True)
 
     incrementalLog = fields.Text('Last Log Entries', readonly = True)
 
