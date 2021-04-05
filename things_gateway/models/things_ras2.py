@@ -5,6 +5,7 @@ from odoo.addons.base.models.res_partner import _tz_get
 
 class ThingsRAS2(models.Model):
     _name = 'things.ras2'
+    _inherit = ['things.basis']
     _description = 'Model for the RFID Attendance Terminal'
     _rec_name = 'RASxxx'
 
